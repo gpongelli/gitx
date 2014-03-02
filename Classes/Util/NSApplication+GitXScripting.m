@@ -10,7 +10,6 @@
 #import "GitXScriptingConstants.h"
 #import "PBDiffWindowController.h"
 #import "PBGitRepository.h"
-#import "PBCloneRepositoryPanel.h"
 
 #import <ObjectiveGit/GTRepository.h>
 
@@ -58,7 +57,8 @@
 		if (destinationURL) {
 			BOOL isBare = [[arguments objectForKey:kGitXCloneIsBareKey] boolValue];
 
-			[PBCloneRepositoryPanel beginCloneRepository:repository toURL:destinationURL isBare:isBare];
+          // TODO: This should be moved to PBGitRepository then...
+//			[PBCloneRepositoryPanel beginCloneRepository:repository toURL:destinationURL isBare:isBare];
 		}
 	}
 }

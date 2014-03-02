@@ -12,12 +12,51 @@
 #import "PBEasyPipe.h"
 #import "PBGitBinary.h"
 #import "GitRepoFinder.h"
+#import "PBCloneViewController.h"
 
 #import <ObjectiveGit/GTRepository.h>
 
 @implementation PBRepositoryDocumentController
 
 - (void)cloneDocument:(id)sender {
+	NSSavePanel *panel = [NSSavePanel savePanel];
+
+	PBCloneViewController *cloneViewController = [[PBCloneViewController alloc] init];
+
+	[panel setTitle:@"Clone Repository"];
+	[panel setMessage:@"Choose the repository to clone and where to put it"];
+	[panel setNameFieldLabel:@"Repository name:"];
+	[panel setPrompt:@"Clone"];
+	[panel setAccessoryView:cloneViewController.view];
+
+	if ([panel runModal] != NSFileHandlingPanelOKButton) {
+		return;
+	}
+
+	NSURL *localURL = panel.URL;
+	NSURL *cloneURL = cloneViewController.URL;
+
+	NSError *error = nil;
+	BOOL success = [GTRepository cloneFromURL:cloneURL toWorkingDirectory:localURL options:nil error:&error transferProgressBlock:^(const git_transfer_progress *progress) {
+
+	} checkoutProgressBlock:^(NSString *path, NSUInteger completedSteps, NSUInteger totalSteps) {
+
+	}];
+
+	if (!success) {
+		[self presentError:error];
+		return;
+	}
+
+	PBGitRepository *repo = [[PBGitRepository alloc] initWithContentsOfURL:localURL ofType:PBGitRepositoryDocumentType error:&error];
+	if (!repo) {
+		[self presentError:error];
+		return;
+	}
+
+	[self addDocument:repo];
+	[repo makeWindowControllers];
+	[repo showWindows];
 }
 
 // This method is overridden to configure the open panel to only allow
@@ -36,16 +75,21 @@
 	[op setCanChooseFiles:NO];
 	[op setCanChooseDirectories:YES];
 	[op setAllowsMultipleSelection:NO];
-	[op setMessage:@"Initialize a repository here:"];
-	[op setTitle:@"New Repository"];
-	if ([op runModal] != NSFileHandlingPanelOKButton)
-        return nil;
+	[op setTitle:@"Create Repository"];
+	[op setMessage:@"Choose the name and location of the repository:"];
+	[op setNameFieldLabel:@"Repository name:"];
+	[op setPrompt:@"Create"];
+	// TODO: Bare setting ?
+	if ([op runModal] != NSFileHandlingPanelOKButton) {
+		*outError = [NSError errorWithDomain:NSCocoaErrorDomain code:NSUserCancelledError userInfo:nil];
+		return nil;
+	}
 
-    BOOL success = [GTRepository initializeEmptyRepositoryAtFileURL:[op URL] error:outError];
-    if (!success)
-        return nil; // Repo creation failed
+	BOOL success = [GTRepository initializeEmptyRepositoryAtFileURL:[op URL] error:outError];
+	if (!success)
+		return nil; // Repo creation failed
 
-    return [[PBGitRepository alloc] initWithContentsOfURL:[op URL] ofType:PBGitRepositoryDocumentType error:outError];
+	return [[PBGitRepository alloc] initWithContentsOfURL:[op URL] ofType:PBGitRepositoryDocumentType error:outError];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)item
