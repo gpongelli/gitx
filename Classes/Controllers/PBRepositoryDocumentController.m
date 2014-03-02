@@ -20,7 +20,7 @@
 // selection of directories
 - (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
 {
-	[openPanel setCanChooseFiles:YES];
+	[openPanel setCanChooseFiles:NO];
 	[openPanel setCanChooseDirectories:YES];
 	[openPanel setAllowedFileTypes:[NSArray arrayWithObject:@"git"]];
 	return [openPanel runModal];
