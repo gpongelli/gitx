@@ -80,8 +80,8 @@
 	[cachedFilesController setSortDescriptors:[NSArray arrayWithObject:
 		[[NSSortDescriptor alloc] initWithKey:@"path" ascending:true]]];
 
-  // listen for updates
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_repositoryUpdatedNotification:) name:PBGitRepositoryEventNotification object:repository];
+    // listen for updates
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_repositoryUpdatedNotification:) name:PBGitRepositoryEventNotification object:repository];
 
 	[cachedFilesController setAutomaticallyRearrangesObjects:NO];
 	[unstagedFilesController setAutomaticallyRearrangesObjects:NO];

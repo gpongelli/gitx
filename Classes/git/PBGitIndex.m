@@ -17,7 +17,7 @@ NSString *PBGitIndexIndexRefreshStatus = @"PBGitIndexIndexRefreshStatus";
 NSString *PBGitIndexIndexRefreshFailed = @"PBGitIndexIndexRefreshFailed";
 NSString *PBGitIndexFinishedIndexRefresh = @"PBGitIndexFinishedIndexRefresh";
 
-NSString *PBGitIndexIndexUpdated = @"GBGitIndexIndexUpdated";
+NSString *PBGitIndexIndexUpdated = @"PBGitIndexIndexUpdated";
 
 NSString *PBGitIndexCommitStatus = @"PBGitIndexCommitStatus";
 NSString *PBGitIndexCommitFailed = @"PBGitIndexCommitFailed";
@@ -534,8 +534,7 @@ NS_ENUM(NSUInteger, PBGitIndexOperation) {
 - (void)postIndexChange
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		[[NSNotificationCenter defaultCenter] postNotificationName:PBGitIndexIndexUpdated
-															object:self];
+		[[NSNotificationCenter defaultCenter] postNotificationName:PBGitIndexIndexUpdated object:self];
 	});
 }
 
