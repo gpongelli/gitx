@@ -401,30 +401,25 @@ NS_ENUM(NSUInteger, PBGitIndexOperation) {
 			if (stage) {
 				[input appendFormat:@"%@\0", file.path];
 			} else {
-				NSString *indexInfo;
-				if (file.status == NEW) {
-					// Index info lies because the file is NEW
-					indexInfo = [NSString stringWithFormat:@"0 0000000000000000000000000000000000000000\t\"%@\"", file.path];
-				} else {
-					indexInfo = [file indexInfo];
-				}
+				NSString *indexInfo = [file indexInfo];
 				[input appendString:indexInfo];
 			}
 		}
 
 		int ret = 1;
+		NSArray *arguments = nil;
 		if (stage) {
-			[self.repository outputForArguments:[NSArray arrayWithObjects:@"update-index", @"--add", @"--remove", @"-z", @"--stdin", nil]
-									inputString:input
-									   retValue:&ret];
+			arguments = @[@"update-index", @"--add", @"--remove", @"-z", @"--stdin"];
 		} else {
-			[self.repository outputForArguments:[NSArray arrayWithObjects:@"update-index", @"-z", @"--index-info", nil]
-									inputString:input
-									   retValue:&ret];
+			arguments = @[@"update-index", @"-z", @"--index-info"];
 		}
+		NSString *output = [self.repository outputForArguments:arguments
+												   inputString:input
+													  retValue:&ret];
 
 		if (ret) {
 			[self postOperationFailed:[NSString stringWithFormat:@"Error in %@ files. Return value: %i", (stage ? @"staging" : @"unstaging"), ret]];
+			NSLog(@"%@ output was: %@", (stage ? @"staging" : @"unstaging"), output);
 			return NO;
 		}
 
