@@ -11,3 +11,4 @@ deploy:
   file: build/Release/GitX.app
   on:
     repo: tiennou/gitx
+    tags: true
