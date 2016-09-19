@@ -3,9 +3,12 @@ xcode_project: GitX.xcodeproj
 xcode_scheme: Release
 osx_image: xcode7.1
 before_install:
-- objective-git/script/bootstrap
+# - eval $(xcodebuild -showBuildSettings 2&> /dev/null | grep TARGET_BUILD_DIR | sed -E -e 's/ (=) /\1/')
+  - xcodebuild -showBuildSettings 2&> /dev/null | grep TARGET_BUILD_DIR | sed -E -e 's/ (=) /\1/'
+  - objective-git/script/bootstrap
 deploy:
   provider: releases
+  skip_cleanup: true
   api_key:
     secure: jGMbMW54h92yLjX7RtxCP3sZzIo3exEr7+3hccq1wUP03o4jrEc0VwmKQkoXMTeKJDh3U5cJMOdZ/O7ozM1fMhVABpbTQnvxwltMTZavZujJDxltsRh8R2n+tyvgRhqougIagN2XGQ+xIQYl4U5U5J3VToRrROd7h4e2N0/fDMv8jjVEexzB9qUm1bsJPM+SxQr193hGnItwg07s5ItCVhoICAHStHqXw7Bc14O1BDQM4Mn32hi6U5a4s9v4qfsoLzJbEPGaZpSwaVJvY4y8T9z0lLfUdDvVWXRrwQcHqGhksLz/qA/ThFoq3/3b6kmqsDd0zbcMQSw15mFaKUw1GFefBixBeoHABmnNFH77wk8Ay5l4PU4D5+ecT48xGQt230unc8/yj+qKYQcoHwwP3SRWXga0KjFox87ax4jNuzyUmCJ71yyyncB7J+dRt3YFtdcGqVVT8WPBU5jeG3a/T5zUGLpXyVdfLrWTf1iJzNF2My+rDHck14y2Bm6CXb4Kl1hsynDpt+mBwQd39925Mr3UU5G4x5lRf0RJHnlb1hm6vqFjiCmzpm7KN2vtNeiTvu87CFgQ3YdWRKhDWrscOKEBk+7i+BqSmzTRKLIYZss5KS+8y1YiQXbBOqocLCJCKhjOXqmttmnnepMDnCJsBmTzeAlX1U1JziudQcr2qhs=
   file: $TRAVIS_BUILD_DIR/Build/Products/Release/GitX.app
